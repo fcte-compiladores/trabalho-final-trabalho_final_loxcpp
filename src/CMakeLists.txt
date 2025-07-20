@@ -42,4 +42,4 @@ target_include_directories(lox_cpp PUBLIC src)
 # não é necessário.
 
 # Mensagem final para o usuário saber que a configuração terminou.
-message(STATUS "Configuração do LoxCpp completa. Use 'make' para compilar.")x
+message(STATUS "Configuração do LoxCpp completa. Use 'make' para compilar.")
