@@ -7,17 +7,20 @@ Este é o repositório para o projeto final da disciplina de Compiladores, uma i
 
 ## Integrantes
 
+<div align = "center">
 <table>
   <tr>
      <td align="center"><a href="https://github.com/leticiatmartins"><img style="border-radius: 50%;" src="https://github.com/anajoyceamorim.png" width="190px;" alt=""/><br /><sub><b>Ana Joyce</b></sub></a><br />
-    <td align="center"><a href="https://github.com/BiancaPatrocinio7"><img style="border-radius: 50%;" src="https://github.com/BiancaPatrocinio7.png" width="190;" alt=""/><br /><sub><b>Bianca Patrocínio</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/BiancaPatrocinio7"><img style="border-radius: 50%;" src="https://github.com/BiancaPatrocinio7.png" width="190px;" alt=""/><br /><sub><b>Bianca Patrocínio</b></sub></a><br /></td>
   </tr>
 </table>
 
 | Matrícula    | Aluno                       |
 | ------------ | --------------------------- |
 | 20/2016702   | Ana Joyce |
-| 22/1008801   | Bianca Patrocínio Castro    |
+| 22/1008801   | Bianca Patrocínio   |
+
+</div>
 
 ---
 
