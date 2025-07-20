@@ -1,4 +1,3 @@
-// Scanner.hpp
 #pragma once
 
 #include <string>
@@ -11,10 +10,21 @@ public:
     std::vector<Token> scanTokens();
 
 private:
-    // Mantemos a referência para o código fonte
-    const std::string& m_source; 
-    
-    // ADICIONE ESTAS DUAS LINHAS PARA CORRIGIR O ERRO
-    std::vector<Token> m_tokens; // Onde os tokens serão armazenados
-    int m_line = 1;              // Para rastrear a linha atual
+    bool isAtEnd() const;
+    void scanToken();
+    char advance();
+    void addToken(TokenType type);
+    void addToken(TokenType type, const LiteralValue& literal);
+    bool match(char expected);
+    char peek() const;
+    char peekNext() const;
+    void string();
+    void number();
+    void identifier();
+
+    const std::string& m_source;
+    std::vector<Token> m_tokens;
+    int m_start = 0;
+    int m_current = 0;
+    int m_line = 1;
 };
