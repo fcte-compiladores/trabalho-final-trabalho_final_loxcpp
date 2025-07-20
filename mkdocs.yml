@@ -1,0 +1,51 @@
+# Informações do Projeto
+site_name: "Nome do Meu Projeto"
+site_url: "https://seu-usuario.github.io/seu-projeto/" # URL final do site
+site_author: "Seu Nome ou Nome da Equipe"
+site_description: "Uma breve descrição sobre o seu projeto e a documentação."
+
+# Repositório
+repo_name: "seu-usuario/seu-projeto"
+repo_url: "https://github.com/seu-usuario/seu-projeto"
+edit_uri: "edit/main/docs/" # Permite que usuários sugiram edições diretamente
+
+# Configuração do Tema
+theme:
+  name: material
+  language: pt # Traduz elementos do tema para português
+  palette:
+    # Paleta de cores para modo claro e escuro
+    - scheme: default # Modo claro
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo escuro
+    - scheme: slate # Modo escuro
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+# Estrutura de Navegação (Menu)
+nav:
+  - 'Início': 'index.md'
+  - 'Guia do Usuário':
+    - 'Instalação': 'guides/installation.md'
+    - 'Primeiros Passos': 'guides/getting-started.md'
+  - 'Sobre': 'about.md'
+
+# Extensões Markdown (para funcionalidades extras)
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
