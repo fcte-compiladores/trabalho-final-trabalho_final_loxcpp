@@ -77,3 +77,56 @@ os critérios abaixo:
 - Testes unitários: até +15%, dependendo da cobertura
 
 Após aplicar todos os bônus, a nota é truncada no intervalo 0-100%. 
+
+---
+
+# LoxCpp: Um Interpretador para a Linguagem Lox em C++
+
+Este é o repositório para o projeto final da disciplina de Compiladores, uma implementação da linguagem de programação Lox em C++ moderno.
+
+## Como Compilar e Executar
+
+Siga estas instruções para compilar e executar o projeto em um ambiente Linux ou macOS.
+
+### Pré-requisitos
+
+Antes de começar, garanta que você tenha as seguintes ferramentas instaladas:
+
+* **Git:** Para clonar o repositório.
+* **Um compilador C++:** `g++` (GCC) ou `Clang`.
+* **CMake:** Versão 3.15 ou superior.
+* **Make:** A ferramenta de build padrão em sistemas baseados em Unix.
+
+### Passo a Passo
+
+1.  **Clone o Repositório**
+    Abra seu terminal e clone o projeto do GitHub/GitLab.
+
+    ```bash
+    git clone <URL_DO_SEU_REPOSITORIO>
+    cd <NOME_DA_PASTA_DO_PROJETO>
+    ```
+
+2.  **Crie o Diretório de Build**
+    Nós seguimos a prática de "out-of-source build", que mantém os arquivos de compilação separados do código-fonte.
+
+    ```bash
+    mkdir build
+    cd build
+    ```
+
+3.  **Gere os Arquivos de Build com CMake**
+    A partir da pasta `build`, execute o CMake para ele encontrar seu `CMakeLists.txt` e gerar os Makefiles.
+
+    ```bash
+    cmake ..
+    ```
+
+4.  **Compile o Projeto com Make**
+    Agora, com tudo configurado, compile o código.
+
+    ```bash
+    make
+    ```
+
+    Se a compilação for bem-sucedida, você terá um executável chamado `lox_cpp` dentro da pasta `build/`.

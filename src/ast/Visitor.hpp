@@ -1,0 +1,1 @@
+// Padrão de projeto Visitor, muito útil aqui!

@@ -1,0 +1,32 @@
+# Diretórios de build do CMake
+/build/
+
+# Arquivos de cache e de projeto do CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# Makefiles gerados pelo CMake
+Makefile
+
+# Binários e bibliotecas compiladas
+*.o
+*.a
+*.so
+*.lib
+*.dll
+*.exe
+*.out
+
+# Arquivos de backup de editores comuns
+*.swp
+*~
+
+# Configurações de editores de código
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
