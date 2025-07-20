@@ -26,8 +26,6 @@ Makefile
 # Configurações de editores de código
 .vscode/
 .idea/
-.venv/
-site/
 
 # Arquivos de sistema operacional
 .DS_Store
