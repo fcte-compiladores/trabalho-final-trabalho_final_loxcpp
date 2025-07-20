@@ -1,0 +1,55 @@
+# Nome do Workflow que aparecerá na aba "Actions" do seu repositório
+name: Deploy MkDocs to GitHub Pages
+
+# Gatilho: Este workflow vai rodar toda vez que você fizer um 'push' no branch 'main'
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# Permissões: Concede permissões para a Action escrever no ambiente do GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Tarefas (Jobs) a serem executadas
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Usa uma máquina virtual Linux para rodar os comandos
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina virtual
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # 3. Instala as dependências do seu projeto (MkDocs e o tema)
+      - name: Install dependencies
+        run: pip install mkdocs mkdocs-material
+
+      # 4. Constrói o site estático com o MkDocs
+      # O MkDocs vai gerar os arquivos HTML na pasta 'site'
+      - name: Build MkDocs site
+        run: mkdocs build
+
+      # 5. Configura o ambiente do GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 6. Faz o upload dos arquivos construídos (da pasta 'site') como um artefato
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './site'
+
+      # 7. Faz o deploy do artefato para o GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
