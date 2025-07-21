@@ -160,8 +160,8 @@ brew install gcc # Para o g++ (GCC) ou use clang que já vem com Xcode Command L
     Abra seu terminal e clone o projeto do GitHub/GitLab.
 
     ```bash
-    git clone <URL_DO_SEU_REPOSITORIO>
-    cd <NOME_DA_PASTA_DO_PROJETO>
+    git clone https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git
+    cd trabalho-final-trabalho_final_loxcpp
     ```
 
 2.  **Crie o Diretório de Build**
