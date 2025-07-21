@@ -1,7 +1,7 @@
 #include "Scanner.hpp"
 #include "ast/ASTPrinter.hpp"
-#include "Parser.hpp"        
-#include "Interpreter.hpp"   
+#include "Parser.hpp"
+#include "Interpreter.hpp"
 
 #include <iostream>
 #include <string>
@@ -9,14 +9,13 @@
 #include <fstream>
 #include <sstream>
 
-// Usa o namespace lox para evitar ter que escrever lox:: a todo momento.
 using namespace lox;
 
-// Instâncias globais para o interpretador e controle de erro.
 static Interpreter interpreter;
 static bool hadError = false;
 
-void run(const std::string& source) {
+// A função 'run' agora aceita um booleano para controlar a impressão da AST
+void run(const std::string& source, bool printAst) {
     hadError = false;
 
     Scanner scanner(source);
@@ -27,18 +26,22 @@ void run(const std::string& source) {
 
     if (hadError) return;
 
-    // Descomente para ver a AST
-    // std::cout << "--- AST ---\n";
-    // ASTPrinter printer;
-    // for(const auto& stmt : statements) {
-    //     if(stmt) std::cout << printer.print(*stmt) << std::endl;
-    // }
-    // std::cout << "\n--- Output ---\n";
+    // A impressão da AST agora é condicional, baseada no flag
+    if (printAst) {
+        std::cout << "--- AST ---\n";
+        ASTPrinter printer;
+        for (const auto& stmt : statements) {
+            if (stmt) {
+                std::cout << printer.print(*stmt) << std::endl;
+            }
+        }
+        std::cout << "\n--- Output ---\n";
+    }
 
     interpreter.interpret(statements);
 }
 
-void runFile(const std::string& path) {
+void runFile(const std::string& path, bool printAst) {
     std::ifstream file(path);
     if (!file) {
         std::cerr << "Could not open file: " << path << std::endl;
@@ -46,11 +49,11 @@ void runFile(const std::string& path) {
     }
     std::stringstream buffer;
     buffer << file.rdbuf();
-    run(buffer.str());
+    run(buffer.str(), printAst);
     if (hadError) exit(65);
 }
 
-void runPrompt() {
+void runPrompt(bool printAst) {
     std::string line;
     std::cout << "Lox C++ Interpreter\n";
     for (;;) {
@@ -59,18 +62,34 @@ void runPrompt() {
             std::cout << "\n";
             break;
         }
-        run(line);
+        run(line, printAst);
     }
 }
 
 int main(int argc, char* argv[]) {
-    if (argc > 2) {
-        std::cout << "Usage: cpplox [script]" << std::endl;
-        return 64;
-    } else if (argc == 2) {
-        runFile(argv[1]);
-    } else {
-        runPrompt();
+    // Lógica para detectar o flag '--print-ast'
+    bool printAst = false;
+    std::string filePath;
+
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--print-ast") {
+            printAst = true;
+        } else {
+            // Assume que qualquer outro argumento é o caminho do arquivo
+            if (!filePath.empty()) {
+                std::cout << "Usage: cpplox [--print-ast] [script]" << std::endl;
+                return 64;
+            }
+            filePath = arg;
+        }
     }
+
+    if (!filePath.empty()) {
+        runFile(filePath, printAst);
+    } else {
+        runPrompt(printAst);
+    }
+
     return 0;
 }
