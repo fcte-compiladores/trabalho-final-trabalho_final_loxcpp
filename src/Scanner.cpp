@@ -3,7 +3,6 @@
 #include <map>
 #include <cctype>
 
-// O mapa de palavras-chave não precisa de alterações.
 static const std::map<std::string, TokenType> keywords = {
     {"and",    TokenType::AND}, {"class",  TokenType::CLASS},
     {"else",   TokenType::ELSE}, {"false",  TokenType::FALSE},
@@ -23,18 +22,16 @@ std::vector<Token> Scanner::scanTokens() {
         m_start = m_current;
         scanToken();
     }
-    // Cria o token de fim de arquivo com um literal 'nil' do tipo lox::Value.
+
     m_tokens.emplace_back(TokenType::END_OF_FILE, "", lox::Value{std::monostate{}}, m_line);
     return m_tokens;
 }
 
-// MUDANÇA CRÍTICA: A definição do método agora corresponde ao .hpp
 void Scanner::addToken(TokenType type, const lox::Value& literal) {
     std::string text = m_source.substr(m_start, m_current - m_start);
     m_tokens.emplace_back(type, text, literal, m_line);
 }
 
-// Esta sobrecarga para tokens sem literal agora funciona perfeitamente.
 void Scanner::addToken(TokenType type) {
     addToken(type, lox::Value{std::monostate{}});
 }
@@ -50,10 +47,10 @@ void Scanner::string() {
         return;
     }
 
-    advance(); // O '"' final.
+    advance(); 
 
     std::string value = m_source.substr(m_start + 1, m_current - m_start - 2);
-    addToken(TokenType::STRING, value); // O std::string é convertido para lox::Value
+    addToken(TokenType::STRING, value);
 }
 
 void Scanner::number() {
@@ -65,7 +62,7 @@ void Scanner::number() {
     }
     
     double value = std::stod(m_source.substr(m_start, m_current - m_start));
-    addToken(TokenType::NUMBER, value); // O double é convertido para lox::Value
+    addToken(TokenType::NUMBER, value);
 }
 
 void Scanner::identifier() {
@@ -77,7 +74,6 @@ void Scanner::identifier() {
     addToken(type);
 }
 
-// O restante do arquivo (funções de apoio e scanToken) não precisa de alterações.
 bool Scanner::isAtEnd() const { return m_current >= m_source.length(); }
 char Scanner::advance() { return m_source[m_current++]; }
 bool Scanner::match(char expected) {

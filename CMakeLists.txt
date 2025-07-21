@@ -20,26 +20,37 @@ endif()
 # --- Encontrando os Arquivos Fonte ---
 
 # Busca recursivamente dentro da pasta 'src/' por todos os arquivos
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+# CUIDADO: Não inclua o main.cpp aqui para a biblioteca
+file(GLOB_RECURSE LIB_SOURCES "src/*.cpp" "src/ast/*.cpp")
+list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
 
-# --- Definindo o Executável ---
+# --- Definindo a Biblioteca e o Executável ---
 
-# Cria o alvo principal do projeto: o executável.
-add_executable(lox_cpp ${SOURCES})
+# 1. Cria uma biblioteca estática com todo o código do interpretador
+add_library(lox_lib STATIC ${LIB_SOURCES})
+
+# 2. Torna os includes de 'src' públicos para quem usar a lox_lib
+target_include_directories(lox_lib PUBLIC src)
+
+# 3. Cria o executável principal APENAS com o main.cpp
+add_executable(lox_cpp src/main.cpp)
+
+# 4. Linka o executável com a nossa biblioteca
+target_link_libraries(lox_cpp PRIVATE lox_lib)
 
 
-# --- Configurando os Diretórios de Inclusão (Include) ---
+# --- Configuração do Google Test ---
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
 
-# vir um #include "...", procure por esse arquivo a partir
-# da pasta 'src/'".
-target_include_directories(lox_cpp PUBLIC src)
+FetchContent_MakeAvailable(googletest)
 
+# Habilita o diretório de testes
+enable_testing()
+add_subdirectory(tests)
 
-# --- (Opcional) Adicionando Bibliotecas ---
-# Se no futuro vocês precisarem de bibliotecas externas (ex: Google Test),
-# vocês as adicionariam aqui com 'target_link_libraries()'. Por enquanto,
-# não é necessário.
-
-# Mensagem final para o usuário saber que a configuração terminou.
-message(STATUS "Configuração do LoxCpp completa. Use 'make' para compilar.")
+message(STATUS "Configuração do LoxCpp completa. Use 'make' para compilar e 'make test' para rodar os testes.")

@@ -2,14 +2,12 @@
 #include <iostream>
 #include <vector>
 
-// Abre o namespace lox
 namespace lox {
 
-    // A função binary_helper agora é um método da classe Parser.
     template<typename F>
     std::unique_ptr<Expr> Parser::binary_helper(F&& next_rule, const std::vector<TokenType>& types) {
         auto expr = (this->*next_rule)();
-        while (match(types)) { // Agora pode chamar 'match' diretamente.
+        while (match(types)) {
             const Token op = previous();
             auto right = (this->*next_rule)();
             expr = std::make_unique<Binary>(std::move(expr), op, std::move(right));
@@ -27,7 +25,6 @@ namespace lox {
         return statements;
     }
 
-    // --- Regras de Statement ---
     std::unique_ptr<Stmt> Parser::declaration() {
         try {
             if (match({TokenType::VAR})) return varDeclaration();
@@ -102,7 +99,6 @@ namespace lox {
         return statements;
     }
 
-    // --- Regras de Expressão ---
     std::unique_ptr<Expr> Parser::expression() {
         return assignment();
     }
@@ -115,7 +111,8 @@ namespace lox {
             if (auto* var = dynamic_cast<Variable*>(expr.get())) {
                 return std::make_unique<Assign>(var->name, std::move(value));
             }
-            error(equals, "Invalid assignment target.");
+            // CORREÇÃO CRÍTICA: Lançar a exceção de erro.
+            throw error(equals, "Invalid assignment target.");
         }
         return expr;
     }
@@ -151,9 +148,6 @@ namespace lox {
         if (match({TokenType::NIL})) return std::make_unique<Literal>(Value{std::monostate{}});
         
         if (match({TokenType::NUMBER, TokenType::STRING})) {
-            // LiteralValue (de Token) é um std::variant compatível com lox::Value
-            // mas o construtor de Literal espera um lox::Value.
-            // A conversão direta é possível se os tipos no variant forem os mesmos.
             return std::make_unique<Literal>(previous().literal);
         }
 
@@ -170,8 +164,6 @@ namespace lox {
         throw error(peek(), "Expect expression.");
     }
     
-    // O resto dos métodos auxiliares aqui...
-    // (check, isAtEnd, advance, peek, previous, consume, error, synchronize)
     bool Parser::match(const std::vector<TokenType>& types) {
         for (TokenType type : types) {
             if (check(type)) {
@@ -210,7 +202,6 @@ namespace lox {
     }
     
     Parser::ParseError Parser::error(const Token& token, const std::string& message) {
-        // Lox::error(token, message); // Futuramente
         std::cerr << "[line " << token.line << "] Error";
         if (token.type == TokenType::END_OF_FILE) {
             std::cerr << " at end";
@@ -242,6 +233,4 @@ namespace lox {
             advance();
         }
     }
-
-
-} // Fecha o namespace lox
+}

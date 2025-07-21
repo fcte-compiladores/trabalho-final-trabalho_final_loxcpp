@@ -7,7 +7,6 @@
 #include <any>
 
 // Forward declaration para a classe Environment no namespace GLOBAL.
-// Esta é a correção principal para o erro "incomplete type".
 class Environment;
 
 namespace lox {
@@ -30,7 +29,6 @@ namespace lox {
     struct VarStmt;
     struct WhileStmt;
 
-    // A classe Interpreter herda de Visitor (que agora não é um template).
     class Interpreter : public Visitor {
     public:
         Interpreter();
@@ -72,4 +70,4 @@ namespace lox {
         bool valuesEqual(const Value& a, const Value& b);
     };
 
-} // Fim do namespace lox
+}

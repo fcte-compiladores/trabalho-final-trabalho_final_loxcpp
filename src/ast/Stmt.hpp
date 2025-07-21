@@ -4,7 +4,7 @@
 #include "ast/Expr.hpp"
 #include <vector>
 #include <memory>
-#include <any> // Incluído para std::any
+#include <any> 
 #include "../Token.hpp"
 
 namespace lox {
@@ -25,7 +25,6 @@ struct ExpressionStmt : public Stmt {
     explicit ExpressionStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    // Assinatura corrigida
     std::any accept(Visitor& visitor) const override {
         return visitor.visitExpressionStmt(*this);
     }
@@ -37,7 +36,6 @@ struct PrintStmt : public Stmt {
     explicit PrintStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    // Assinatura corrigida
     std::any accept(Visitor& visitor) const override {
         return visitor.visitPrintStmt(*this);
     }
@@ -49,7 +47,6 @@ struct BlockStmt : public Stmt {
     explicit BlockStmt(std::vector<std::unique_ptr<Stmt>> statements)
         : statements(std::move(statements)) {}
 
-    // Assinatura corrigida
     std::any accept(Visitor& visitor) const override {
         return visitor.visitBlockStmt(*this);
     }
@@ -62,7 +59,6 @@ struct VarStmt : public Stmt {
     VarStmt(Token name, std::unique_ptr<Expr> initializer)
         : name(std::move(name)), initializer(std::move(initializer)) {}
 
-    // Assinatura corrigida
     std::any accept(Visitor& visitor) const override {
         return visitor.visitVarStmt(*this);
     }
@@ -93,4 +89,4 @@ struct WhileStmt : public Stmt {
     }
 };
 
-} // Fim do namespace lox
+}
