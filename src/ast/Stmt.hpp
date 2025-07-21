@@ -2,19 +2,19 @@
 
 #include "ast/Visitor.hpp"
 #include "ast/Expr.hpp"
-#include "Value.hpp"
 #include <vector>
 #include <memory>
+#include <any> // Incluído para std::any
 #include "../Token.hpp"
 
 namespace lox {
 
-// Classe base para todos os Statements
+// Classe base para todos os Statements (comandos).
 struct Stmt {
 public:
     virtual ~Stmt() = default;
-    // CORRIGIDO: Assinatura alterada para bater com o Interpreter (Visitor<Value>).
-    virtual Value accept(Visitor<Value>& visitor) const = 0;
+    // Assinatura corrigida para usar std::any e Visitor não-template.
+    virtual std::any accept(Visitor& visitor) const = 0;
 };
 
 // --- Classes Concretas de Statement ---
@@ -25,9 +25,9 @@ struct ExpressionStmt : public Stmt {
     explicit ExpressionStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
-    Value accept(Visitor<Value>& visitor) const override {
-        return visitor.visitExpressionStmt(*this); // ADICIONADO: return
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitExpressionStmt(*this);
     }
 };
 
@@ -37,9 +37,9 @@ struct PrintStmt : public Stmt {
     explicit PrintStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
-    Value accept(Visitor<Value>& visitor) const override {
-        return visitor.visitPrintStmt(*this); // ADICIONADO: return
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitPrintStmt(*this);
     }
 };
 
@@ -49,9 +49,9 @@ struct BlockStmt : public Stmt {
     explicit BlockStmt(std::vector<std::unique_ptr<Stmt>> statements)
         : statements(std::move(statements)) {}
 
-    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
-    Value accept(Visitor<Value>& visitor) const override {
-        return visitor.visitBlockStmt(*this); // ADICIONADO: return
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitBlockStmt(*this);
     }
 };
 
@@ -62,11 +62,35 @@ struct VarStmt : public Stmt {
     VarStmt(Token name, std::unique_ptr<Expr> initializer)
         : name(std::move(name)), initializer(std::move(initializer)) {}
 
-    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
-    Value accept(Visitor<Value>& visitor) const override {
-        return visitor.visitVarStmt(*this); // ADICIONADO: return
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitVarStmt(*this);
     }
 };
 
+struct IfStmt : public Stmt {
+    const std::unique_ptr<Expr> condition;
+    const std::unique_ptr<Stmt> thenBranch;
+    const std::unique_ptr<Stmt> elseBranch;
+
+    IfStmt(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> thenBranch, std::unique_ptr<Stmt> elseBranch)
+        : condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
+
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitIfStmt(*this);
+    }
+};
+
+struct WhileStmt : public Stmt {
+    const std::unique_ptr<Expr> condition;
+    const std::unique_ptr<Stmt> body;
+
+    WhileStmt(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> body)
+        : condition(std::move(condition)), body(std::move(body)) {}
+
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitWhileStmt(*this);
+    }
+};
 
 } // Fim do namespace lox

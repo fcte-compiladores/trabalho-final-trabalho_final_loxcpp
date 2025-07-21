@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Value.hpp"
+#include <any> // Incluir a biblioteca 'any'
 
 namespace lox {
 
@@ -21,30 +21,28 @@ namespace lox {
     struct PrintStmt;
     struct VarStmt;
     struct WhileStmt;
-    // Adicione outros aqui conforme for criando...
 
-    // A classe Visitor, corretamente definida DENTRO do namespace lox
-    template <typename R>
+    // Visitor não é mais um template.
     class Visitor {
     public:
         virtual ~Visitor() = default;
 
-        // Métodos para visitar expressões
-        virtual R visitAssignExpr(const Assign& expr) = 0;
-        virtual R visitBinaryExpr(const Binary& expr) = 0;
-        virtual R visitCallExpr(const Call& expr) = 0;
-        virtual R visitGroupingExpr(const Grouping& expr) = 0;
-        virtual R visitLiteralExpr(const Literal& expr) = 0;
-        virtual R visitUnaryExpr(const Unary& expr) = 0;
-        virtual R visitVariableExpr(const Variable& expr) = 0;
+        // Métodos para visitar expressões retornam std::any.
+        virtual std::any visitAssignExpr(const Assign& expr) = 0;
+        virtual std::any visitBinaryExpr(const Binary& expr) = 0;
+        virtual std::any visitCallExpr(const Call& expr) = 0;
+        virtual std::any visitGroupingExpr(const Grouping& expr) = 0;
+        virtual std::any visitLiteralExpr(const Literal& expr) = 0;
+        virtual std::any visitUnaryExpr(const Unary& expr) = 0;
+        virtual std::any visitVariableExpr(const Variable& expr) = 0;
 
-        // Métodos para visitar statements
-        virtual R visitBlockStmt(const BlockStmt& stmt) = 0;
-        virtual R visitExpressionStmt(const ExpressionStmt& stmt) = 0;
-        virtual R visitIfStmt(const IfStmt& stmt) = 0;
-        virtual R visitPrintStmt(const PrintStmt& stmt) = 0;
-        virtual R visitVarStmt(const VarStmt& stmt) = 0;
-        virtual R visitWhileStmt(const WhileStmt& stmt) = 0;
+        // Métodos para visitar statements retornam std::any.
+        virtual std::any visitBlockStmt(const BlockStmt& stmt) = 0;
+        virtual std::any visitExpressionStmt(const ExpressionStmt& stmt) = 0;
+        virtual std::any visitIfStmt(const IfStmt& stmt) = 0;
+        virtual std::any visitPrintStmt(const PrintStmt& stmt) = 0;
+        virtual std::any visitVarStmt(const VarStmt& stmt) = 0;
+        virtual std::any visitWhileStmt(const WhileStmt& stmt) = 0;
     };
 
 } // Fim do namespace lox

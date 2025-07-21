@@ -1,15 +1,19 @@
 #pragma once
 
 #include "Value.hpp"
-#include "Visitor.hpp"
-#include <memory>  // Para std::shared_ptr, std::unique_ptr
-#include <vector>  // Para std::vector
+#include "ast/Visitor.hpp"
+#include <memory>
+#include <vector>
+#include <any>
 
-// Forward declarations para evitar includes circulares
+// Forward declaration para a classe Environment no namespace GLOBAL.
+// Esta é a correção principal para o erro "incomplete type".
+class Environment;
+
 namespace lox {
-    class Environment;
-    struct Expr;
-    struct Stmt;
+
+    // Forward declarations para todos os nós da AST DENTRO do namespace lox.
+    // Expressões
     struct Assign;
     struct Binary;
     struct Call;
@@ -17,53 +21,55 @@ namespace lox {
     struct Literal;
     struct Unary;
     struct Variable;
+
+    // Statements
     struct BlockStmt;
     struct ExpressionStmt;
     struct IfStmt;
     struct PrintStmt;
     struct VarStmt;
     struct WhileStmt;
-}
 
-namespace lox {
+    // A classe Interpreter herda de Visitor (que agora não é um template).
+    class Interpreter : public Visitor {
+    public:
+        Interpreter();
+        void interpret(const std::vector<std::unique_ptr<Stmt>>& statements);
 
-class Interpreter : public Visitor<Value> {
-public:
-    Interpreter();
-    void interpret(const std::vector<std::unique_ptr<Stmt>>& statements);
+        // --- Implementações do Visitor para Expressões ---
+        // Todos os métodos de visita agora retornam std::any.
+        std::any visitAssignExpr(const Assign& expr) override;
+        std::any visitBinaryExpr(const Binary& expr) override;
+        std::any visitCallExpr(const Call& expr) override;
+        std::any visitGroupingExpr(const Grouping& expr) override;
+        std::any visitLiteralExpr(const Literal& expr) override;
+        std::any visitUnaryExpr(const Unary& expr) override;
+        std::any visitVariableExpr(const Variable& expr) override;
 
-    // --- Implementações do Visitor para Expressões ---
-    Value visitAssignExpr(const Assign& expr) override;
-    Value visitBinaryExpr(const Binary& expr) override;
-    Value visitCallExpr(const Call& expr) override;
-    Value visitGroupingExpr(const Grouping& expr) override;
-    Value visitLiteralExpr(const Literal& expr) override;
-    Value visitUnaryExpr(const Unary& expr) override;
-    Value visitVariableExpr(const Variable& expr) override;
+        // --- Implementações do Visitor para Statements ---
+        std::any visitBlockStmt(const BlockStmt& stmt) override;
+        std::any visitExpressionStmt(const ExpressionStmt& stmt) override;
+        std::any visitIfStmt(const IfStmt& stmt) override;
+        std::any visitPrintStmt(const PrintStmt& stmt) override;
+        std::any visitVarStmt(const VarStmt& stmt) override;
+        std::any visitWhileStmt(const WhileStmt& stmt) override;
 
-    // --- Implementações do Visitor para Statements ---
-    Value visitBlockStmt(const BlockStmt& stmt) override;
-    Value visitExpressionStmt(const ExpressionStmt& stmt) override;
-    Value visitIfStmt(const IfStmt& stmt) override;
-    Value visitPrintStmt(const PrintStmt& stmt) override;
-    Value visitVarStmt(const VarStmt& stmt) override;
-    Value visitWhileStmt(const WhileStmt& stmt) override;
+    private:
+        friend class LoxFunction;
 
-private:
-    friend class LoxFunction; // Permite que LoxFunction acesse o ambiente do interpretador
-    
-    // Ponteiros inteligentes para gerenciar os ambientes de escopo
-    std::shared_ptr<Environment> m_globals;
-    std::shared_ptr<Environment> m_environment;
+        // Ponteiros para os ambientes de escopo.
+        // std::shared_ptr<Environment> agora se refere corretamente à classe no namespace global.
+        std::shared_ptr<Environment> m_globals;
+        std::shared_ptr<Environment> m_environment;
 
-    // Funções auxiliares para avaliar e executar os nós da árvore
-    Value evaluate(const Expr& expr);
-    void execute(const Stmt& stmt);
-    void executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, std::shared_ptr<Environment> environment);
+        // Funções auxiliares para avaliar e executar os nós da árvore.
+        Value evaluate(const Expr& expr);
+        void execute(const Stmt& stmt);
+        void executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, std::shared_ptr<Environment> environment);
 
-    // Funções de apoio à lógica da linguagem
-    bool isTruthy(const Value& value);
-    bool valuesEqual(const Value& a, const Value& b);
-};
+        // Funções de apoio à lógica da linguagem.
+        bool isTruthy(const Value& value);
+        bool valuesEqual(const Value& a, const Value& b);
+    };
 
 } // Fim do namespace lox

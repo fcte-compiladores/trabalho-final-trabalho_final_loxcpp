@@ -1,58 +1,57 @@
-#include "Interpreter.hpp"
 #include "Environment.hpp"
+#include "ast/Stmt.hpp"
+#include "ast/Expr.hpp"
 #include "RuntimeError.hpp"
-#include "Expr.hpp"
-#include "Stmt.hpp"
+
+#include "Interpreter.hpp"
+
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <any>
 
 namespace lox {
 
-// Helper function to convert Value to string for printing
-std::string valueToString(const Value& value) {
-    return std::visit([](const auto& v) -> std::string {
-        using T = std::decay_t<decltype(v)>;
-        if constexpr (std::is_same_v<T, std::monostate>) {
-            return "nil";
-        } else if constexpr (std::is_same_v<T, bool>) {
-            return v ? "true" : "false";
-        } else if constexpr (std::is_same_v<T, double>) {
-            return std::to_string(v);
-        } else if constexpr (std::is_same_v<T, std::string>) {
-            return v;
-        } else if constexpr (std::is_same_v<T, std::shared_ptr<LoxCallable>>) {
-            return "<function>";
-        } else {
-            return "<unknown>";
-        }
-    }, value);
+// Funções de verificação de tipo (sem alterações)
+void checkNumberOperand(const Token& op, const Value& operand) {
+    if (!std::holds_alternative<double>(operand)) {
+        throw RuntimeError(op, "Operand must be a number.");
+    }
 }
+
+void checkNumberOperands(const Token& op, const Value& left, const Value& right) {
+    if (!std::holds_alternative<double>(left) || !std::holds_alternative<double>(right)) {
+        throw RuntimeError(op, "Operands must be numbers.");
+    }
+}
+
 
 Interpreter::Interpreter() {
     m_globals = std::make_shared<Environment>();
     m_environment = m_globals;
-    // Aqui seria um bom lugar para definir funções nativas (ex: clock())
 }
 
 void Interpreter::interpret(const std::vector<std::unique_ptr<Stmt>>& statements) {
     try {
         for (const auto& statement : statements) {
-            execute(*statement);
+            if (statement) {
+                execute(*statement);
+            }
         }
     } catch (const RuntimeError& error) {
-        // Reporta o erro para o usuário, incluindo a linha
-        std::cerr << "[line " << error.token.line << "] RuntimeError: " << error.what() << std::endl;
+        std::cerr << "RuntimeError: " << error.what() << "\n[line " << error.token.line << "]" << std::endl;
     }
 }
 
-// --- Funções Auxiliares ---
-
+// CORRIGIDO: evaluate agora "desembrulha" o std::any retornado pelo accept.
 Value Interpreter::evaluate(const Expr& expr) {
-    return expr.accept(*this);
+    // expr.accept(*this) retorna std::any.
+    // Usamos std::any_cast para extrair o Value de dentro dele.
+    return std::any_cast<Value>(expr.accept(*this));
 }
 
 void Interpreter::execute(const Stmt& stmt) {
+    // accept() ainda é chamado, mas seu valor de retorno std::any é descartado.
     stmt.accept(*this);
 }
 
@@ -64,172 +63,153 @@ void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& stateme
             execute(*statement);
         }
     } catch (...) {
-        // Garante que o ambiente anterior seja restaurado mesmo que uma exceção ocorra
+        // Garante que o ambiente seja restaurado mesmo se uma exceção ocorrer.
         this->m_environment = previous;
         throw;
     }
     this->m_environment = previous;
 }
 
+// Funções de apoio (sem alterações)
 bool Interpreter::isTruthy(const Value& value) {
     if (std::holds_alternative<std::monostate>(value)) return false;
     if (std::holds_alternative<bool>(value)) return std::get<bool>(value);
-    return true; // Números, strings e outros objetos são considerados 'verdadeiros'
+    return true; 
 }
 
 bool Interpreter::valuesEqual(const Value& a, const Value& b) {
-    // Compare variants by type and value
-    if (a.index() != b.index()) return false;
-    return std::visit([](const auto& av, const auto& bv) -> bool {
-        using T = std::decay_t<decltype(av)>;
-        if constexpr (std::is_same_v<T, std::monostate>) {
-            return true; // nil == nil
-        } else if constexpr (std::is_same_v<T, bool>) {
-            if constexpr (std::is_same_v<decltype(bv), bool>) {
-                return av == bv;
-            } else {
-                return false;
-            }
-        } else if constexpr (std::is_same_v<T, double>) {
-            if constexpr (std::is_same_v<decltype(bv), double>) {
-                return av == bv;
-            } else {
-                return false;
-            }
-    } else if constexpr (std::is_same_v<T, std::string>) {
-        if constexpr (std::is_same_v<decltype(bv), std::string>) {
-            return av == bv;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}, a, b);
+    return a == b;
 }
 
-// --- Implementações do Visitor para Statements ---
+// --- Statements ---
+// Todos os métodos visit agora retornam std::any.
+// O valor retornado (geralmente nil) é automaticamente encapsulado em um std::any.
 
-Value Interpreter::visitExpressionStmt(const ExpressionStmt& stmt) {
+std::any Interpreter::visitExpressionStmt(const ExpressionStmt& stmt) {
     evaluate(*stmt.expression);
-    return Value(); // Retorna um valor 'nil' padrão
+    return std::monostate{};
 }
 
-Value Interpreter::visitPrintStmt(const PrintStmt& stmt) {
+std::any Interpreter::visitPrintStmt(const PrintStmt& stmt) {
     Value value = evaluate(*stmt.expression);
-    std::cout << value.toString() << std::endl;
-    return Value();
+    std::cout << valueToString(value) << std::endl;
+    return std::monostate{};
 }
 
-Value Interpreter::visitVarStmt(const VarStmt& stmt) {
-    Value value; // Inicializa com 'nil'
+std::any Interpreter::visitVarStmt(const VarStmt& stmt) {
+    Value value = std::monostate{};
     if (stmt.initializer != nullptr) {
         value = evaluate(*stmt.initializer);
     }
     m_environment->define(stmt.name.lexeme, value);
-    return Value();
+    return std::monostate{};
 }
 
-Value Interpreter::visitBlockStmt(const BlockStmt& stmt) {
+std::any Interpreter::visitBlockStmt(const BlockStmt& stmt) {
     executeBlock(stmt.statements, std::make_shared<Environment>(m_environment));
-    return Value();
+    return std::monostate{};
 }
 
-Value Interpreter::visitIfStmt(const IfStmt& stmt) {
+std::any Interpreter::visitIfStmt(const IfStmt& stmt) {
     if (isTruthy(evaluate(*stmt.condition))) {
         execute(*stmt.thenBranch);
     } else if (stmt.elseBranch != nullptr) {
         execute(*stmt.elseBranch);
     }
-    return Value();
+    return std::monostate{};
 }
 
-Value Interpreter::visitWhileStmt(const WhileStmt& stmt) {
+std::any Interpreter::visitWhileStmt(const WhileStmt& stmt) {
     while (isTruthy(evaluate(*stmt.condition))) {
         execute(*stmt.body);
     }
-    return Value();
+    return std::monostate{};
 }
 
-// --- Implementações do Visitor para Expressões ---
+// --- Expressões ---
+// Todos os métodos visit agora retornam std::any.
+// O Value retornado é automaticamente encapsulado em um std::any.
 
-Value Interpreter::visitAssignExpr(const Assign& expr) {
+std::any Interpreter::visitAssignExpr(const Assign& expr) {
     Value value = evaluate(*expr.value);
     m_environment->assign(expr.name, value);
     return value;
 }
 
-Value Interpreter::visitVariableExpr(const Variable& expr) {
+std::any Interpreter::visitVariableExpr(const Variable& expr) {
     return m_environment->get(expr.name);
 }
 
-Value Interpreter::visitLiteralExpr(const Literal& expr) {
-    return expr.value;
+std::any Interpreter::visitLiteralExpr(const Literal& expr) {
+    return expr.value; //
 }
 
-Value Interpreter::visitGroupingExpr(const Grouping& expr) {
+std::any Interpreter::visitGroupingExpr(const Grouping& expr) {
     return evaluate(*expr.expression);
 }
 
-Value Interpreter::visitUnaryExpr(const Unary& expr) {
+std::any Interpreter::visitUnaryExpr(const Unary& expr) {
     Value right = evaluate(*expr.right);
     switch (expr.op.type) {
         case TokenType::MINUS:
-            if (!right.isNumber()) throw RuntimeError(expr.op, "Operand must be a number.");
-            return Value(-right.asNumber());
+            checkNumberOperand(expr.op, right);
+            return -std::get<double>(right);
         case TokenType::BANG:
-            return Value(!isTruthy(right));
+            return !isTruthy(right);
         default:
-            throw RuntimeError(expr.op, "Invalid unary operator."); // Inalcançável
+            throw RuntimeError(expr.op, "Invalid unary operator.");
     }
 }
 
-Value Interpreter::visitBinaryExpr(const Binary& expr) {
+std::any Interpreter::visitBinaryExpr(const Binary& expr) {
     Value left = evaluate(*expr.left);
     Value right = evaluate(*expr.right);
+
     switch (expr.op.type) {
-        // Comparação
         case TokenType::GREATER:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() > right.asNumber());
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) > std::get<double>(right);
         case TokenType::GREATER_EQUAL:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() >= right.asNumber());
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) >= std::get<double>(right);
         case TokenType::LESS:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() < right.asNumber());
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) < std::get<double>(right);
         case TokenType::LESS_EQUAL:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() <= right.asNumber());
-        // Igualdade
-        case TokenType::BANG_EQUAL: return Value(!valuesEqual(left, right));
-        case TokenType::EQUAL_EQUAL: return Value(valuesEqual(left, right));
-        // Aritmética
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) <= std::get<double>(right);
+        
+        case TokenType::BANG_EQUAL: return !valuesEqual(left, right);
+        case TokenType::EQUAL_EQUAL: return valuesEqual(left, right);
+
         case TokenType::MINUS:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() - right.asNumber());
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) - std::get<double>(right);
         case TokenType::SLASH:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            if (right.asNumber() == 0) throw RuntimeError(expr.op, "Division by zero.");
-            return Value(left.asNumber() / right.asNumber());
-        case TokenType::STAR:
-            if (!left.isNumber() || !right.isNumber()) throw RuntimeError(expr.op, "Operands must be numbers.");
-            return Value(left.asNumber() * right.asNumber());
-        case TokenType::PLUS:
-            if (left.isNumber() && right.isNumber()) {
-                return Value(left.asNumber() + right.asNumber());
+            checkNumberOperands(expr.op, left, right);
+            if (std::get<double>(right) == 0.0) {
+                throw RuntimeError(expr.op, "Division by zero.");
             }
-            if (left.isString() && right.isString()) {
-                return Value(left.asString() + right.asString());
+            return std::get<double>(left) / std::get<double>(right);
+        case TokenType::STAR:
+            checkNumberOperands(expr.op, left, right);
+            return std::get<double>(left) * std::get<double>(right);
+
+        case TokenType::PLUS:
+            if (std::holds_alternative<double>(left) && std::holds_alternative<double>(right)) {
+                return std::get<double>(left) + std::get<double>(right);
+            }
+            if (std::holds_alternative<std::string>(left) && std::holds_alternative<std::string>(right)) {
+                return std::get<std::string>(left) + std::get<std::string>(right);
             }
             throw RuntimeError(expr.op, "Operands must be two numbers or two strings.");
+        
         default:
-            throw RuntimeError(expr.op, "Invalid binary operator."); // Inalcançável
+             throw RuntimeError(expr.op, "Invalid binary operator.");
     }
 }
 
-Value Interpreter::visitCallExpr(const Call& expr) {
-    // A implementação de chamadas de função é um passo mais avançado.
+std::any Interpreter::visitCallExpr(const Call& expr) {
     throw RuntimeError(expr.paren, "Can only call functions and classes.");
 }
 
