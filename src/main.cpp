@@ -14,7 +14,6 @@ using namespace lox;
 static Interpreter interpreter;
 static bool hadError = false;
 
-// A função 'run' agora aceita um booleano para controlar a impressão da AST
 void run(const std::string& source, bool printAst) {
     hadError = false;
 
@@ -26,7 +25,6 @@ void run(const std::string& source, bool printAst) {
 
     if (hadError) return;
 
-    // A impressão da AST agora é condicional, baseada no flag
     if (printAst) {
         std::cout << "--- AST ---\n";
         ASTPrinter printer;
@@ -67,7 +65,6 @@ void runPrompt(bool printAst) {
 }
 
 int main(int argc, char* argv[]) {
-    // Lógica para detectar o flag '--print-ast'
     bool printAst = false;
     std::string filePath;
 
@@ -76,7 +73,6 @@ int main(int argc, char* argv[]) {
         if (arg == "--print-ast") {
             printAst = true;
         } else {
-            // Assume que qualquer outro argumento é o caminho do arquivo
             if (!filePath.empty()) {
                 std::cout << "Usage: cpplox [--print-ast] [script]" << std::endl;
                 return 64;

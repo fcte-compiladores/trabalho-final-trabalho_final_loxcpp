@@ -161,6 +161,11 @@ Para configurar e rodar os testes, siga os passos abaixo a partir da **raiz do p
 
 ---
 
+## Referências
+* **Nystrom, Robert. "Crafting Interpreters".** Esta foi a principal referência para a construção do interpretador Lox. A estrutura geral, a gramática da linguagem e muitos dos algoritmos foram diretamente inspirados por esta obra.
+    * [Link para o livro online](https://craftinginterpreters.com/)
+---
+
 ## Estrutura do Código
 
 * **`src/`**: Contém todos os arquivos-fonte C++.
