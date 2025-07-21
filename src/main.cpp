@@ -1,7 +1,7 @@
 #include "Scanner.hpp"
 #include "ast/ASTPrinter.hpp"
-#include "Parser.hpp"         // Fornece lox::Parser
-#include "Interpreter.hpp"    // Fornece lox::Interpreter
+#include "Parser.hpp"        
+#include "Interpreter.hpp"   
 
 #include <iostream>
 #include <string>
@@ -22,11 +22,9 @@ void run(const std::string& source) {
     Scanner scanner(source);
     std::vector<Token> tokens = scanner.scanTokens();
 
-    // MUDANÇA CRÍTICA: Usa lox::Parser para criar o objeto.
     Parser parser(tokens);
     auto statements = parser.parse();
 
-    // Se o parser encontrou um erro, paramos aqui.
     if (hadError) return;
 
     // Descomente para ver a AST

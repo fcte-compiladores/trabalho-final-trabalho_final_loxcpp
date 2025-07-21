@@ -20,7 +20,8 @@ public:
      * @param arguments A lista de argumentos passados para a função.
      * @return O valor de retorno da função.
      */
-    virtual Value call(lox::Interpreter& interpreter, const std::vector<Value>& arguments) = 0;
+    // CORREÇÃO: Adicionado 'lox::' antes de Value
+    virtual lox::Value call(lox::Interpreter& interpreter, const std::vector<lox::Value>& arguments) = 0;
 
     /**
      * @brief Retorna o número de argumentos que a função espera.

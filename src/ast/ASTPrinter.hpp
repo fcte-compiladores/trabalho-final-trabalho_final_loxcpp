@@ -23,7 +23,6 @@ namespace lox {
     struct VarStmt;
     struct WhileStmt;
 
-    // A classe ASTPrinter agora pertence ao namespace lox
     class ASTPrinter : public Visitor {
     public:
         std::string print(const Expr& expr);
@@ -45,4 +44,4 @@ namespace lox {
         std::any visitWhileStmt(const WhileStmt& stmt) override;
     };
 
-} // Fim do namespace lox
+} 

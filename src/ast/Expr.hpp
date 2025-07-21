@@ -66,7 +66,6 @@ namespace lox {
     };
 
     struct Literal : public Expr {
-        // O membro 'value' agora é do tipo lox::Value
         const Value value;
 
         explicit Literal(Value value) : value(std::move(value)) {}
@@ -98,4 +97,4 @@ namespace lox {
         }
     };
 
-} // Fim do namespace lox
+}

@@ -17,7 +17,6 @@ namespace lox {
         std::shared_ptr<LoxCallable>
     >;
 
-    // Apenas a declaração da função.
     std::string valueToString(const Value& value);
 
-} // Fim do namespace lox
+} 

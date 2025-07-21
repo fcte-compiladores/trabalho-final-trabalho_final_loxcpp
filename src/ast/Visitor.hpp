@@ -1,10 +1,9 @@
 #pragma once
 
-#include <any> // Incluir a biblioteca 'any'
+#include <any> 
 
 namespace lox {
 
-    // Forward declarations de todos os tipos de nós para evitar include circular.
     // Expressões
     struct Assign;
     struct Binary;

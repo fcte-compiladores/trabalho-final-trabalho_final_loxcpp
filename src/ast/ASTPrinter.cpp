@@ -8,20 +8,17 @@
 #include <vector>
 #include <any>
 
-// Abre o namespace lox para todo o arquivo
 namespace lox {
 
-    // --- Implementação dos Métodos Públicos ---
-
     std::string ASTPrinter::print(const Expr& expr) {
-        return std::any_cast<std::string>(expr.accept(*this));
+        auto result = expr.accept(*this);
+        return std::any_cast<std::string>(result);
     }
 
     std::string ASTPrinter::print(const Stmt& stmt) {
-        return std::any_cast<std::string>(stmt.accept(*this));
+        auto result = stmt.accept(*this);
+        return std::any_cast<std::string>(result);
     }
-
-    // --- Implementações dos Métodos de Visita ---
 
     std::any ASTPrinter::visitAssignExpr(const Assign& expr) {
         return "(assign " + expr.name.lexeme + " = " + print(*expr.value) + ")";
@@ -89,4 +86,4 @@ namespace lox {
         return "(while " + print(*stmt.condition) + " " + print(*stmt.body) + ")";
     }
 
-} // Fecha o namespace lox
+} 
