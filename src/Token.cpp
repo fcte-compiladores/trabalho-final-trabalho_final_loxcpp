@@ -1,8 +1,11 @@
 #include "Token.hpp"
+#include <string>
 
-Token::Token(TokenType type, std::string lexeme, LiteralValue literal, int line)
+// A implementação do construtor agora aceita lox::Value
+Token::Token(TokenType type, std::string lexeme, lox::Value literal, int line)
     : type(type), lexeme(std::move(lexeme)), literal(std::move(literal)), line(line) {}
 
 std::string Token::toString() const {
-    return "Type: " + std::to_string(static_cast<int>(type)) + " Lexeme: " + lexeme;
+    // A implementação pode ser mais detalhada se você quiser, mas esta funciona.
+    return "Type: " + std::to_string(static_cast<int>(type)) + " Lexeme: '" + lexeme + "'";
 }

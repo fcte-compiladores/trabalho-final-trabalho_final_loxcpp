@@ -4,16 +4,17 @@
 #include "ast/Expr.hpp"
 #include <vector>
 #include <memory>
-#include "../Token.hpp" // Necessário para VarStmt, etc.
+#include <any> // Incluído para std::any
+#include "../Token.hpp"
 
-namespace lox { // <-- ADICIONADO: Início do namespace
+namespace lox {
 
-// Classe base para todos os Statements
+// Classe base para todos os Statements (comandos).
 struct Stmt {
 public:
     virtual ~Stmt() = default;
-    // CORRIGIDO: Usa nosso Visitor<void> unificado. Statements não retornam valor.
-    virtual void accept(Visitor<void>& visitor) const = 0;
+    // Assinatura corrigida para usar std::any e Visitor não-template.
+    virtual std::any accept(Visitor& visitor) const = 0;
 };
 
 // --- Classes Concretas de Statement ---
@@ -24,8 +25,9 @@ struct ExpressionStmt : public Stmt {
     explicit ExpressionStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitExpressionStmt(*this);
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitExpressionStmt(*this);
     }
 };
 
@@ -35,8 +37,9 @@ struct PrintStmt : public Stmt {
     explicit PrintStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitPrintStmt(*this);
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitPrintStmt(*this);
     }
 };
 
@@ -46,12 +49,12 @@ struct BlockStmt : public Stmt {
     explicit BlockStmt(std::vector<std::unique_ptr<Stmt>> statements)
         : statements(std::move(statements)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitBlockStmt(*this);
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitBlockStmt(*this);
     }
 };
 
-// Adicione as outras classes aqui dentro do namespace, por exemplo:
 struct VarStmt : public Stmt {
     const Token name;
     const std::unique_ptr<Expr> initializer;
@@ -59,10 +62,35 @@ struct VarStmt : public Stmt {
     VarStmt(Token name, std::unique_ptr<Expr> initializer)
         : name(std::move(name)), initializer(std::move(initializer)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitVarStmt(*this);
+    // Assinatura corrigida
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitVarStmt(*this);
     }
 };
 
+struct IfStmt : public Stmt {
+    const std::unique_ptr<Expr> condition;
+    const std::unique_ptr<Stmt> thenBranch;
+    const std::unique_ptr<Stmt> elseBranch;
 
-} // <-- ADICIONADO: Fim do namespace
+    IfStmt(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> thenBranch, std::unique_ptr<Stmt> elseBranch)
+        : condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
+
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitIfStmt(*this);
+    }
+};
+
+struct WhileStmt : public Stmt {
+    const std::unique_ptr<Expr> condition;
+    const std::unique_ptr<Stmt> body;
+
+    WhileStmt(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> body)
+        : condition(std::move(condition)), body(std::move(body)) {}
+
+    std::any accept(Visitor& visitor) const override {
+        return visitor.visitWhileStmt(*this);
+    }
+};
+
+} // Fim do namespace lox

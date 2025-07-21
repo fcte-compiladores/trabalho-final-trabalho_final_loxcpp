@@ -1,24 +1,23 @@
-// src/Value.hpp
 #pragma once
 
 #include <string>
 #include <variant>
-#include <memory> // Para std::shared_ptr
+#include <memory>
 
 // Forward declaration
 class LoxCallable;
 
-// O tipo 'Value' pode ser qualquer um destes.
-// Usamos std::monostate para representar 'nil' de forma segura.
-// Usamos std::shared_ptr<LoxCallable> para representar funções e classes.
-using Value = std::variant<
-    std::monostate, // nil
-    bool,
-    double,
-    std::string,
-    std::shared_ptr<LoxCallable>
->;
+namespace lox {
 
-// Funções utilitárias para operar sobre o 'Value'
-std::string toString(const Value& value);
-bool isTruthy(const Value& value);
+    using Value = std::variant<
+        std::monostate, // nil
+        bool,
+        double,
+        std::string,
+        std::shared_ptr<LoxCallable>
+    >;
+
+    // Apenas a declaração da função.
+    std::string valueToString(const Value& value);
+
+} // Fim do namespace lox

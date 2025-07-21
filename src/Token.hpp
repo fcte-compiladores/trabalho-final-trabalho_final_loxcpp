@@ -1,12 +1,9 @@
-// src/Token.hpp
+#pragma once
 
-#pragma once // Evita que o header seja incluído múltiplas vezes
-
+#include "Value.hpp" // Para usar lox::Value
 #include <string>
-#include <variant>
 
-// Usamos 'enum class' para criar um enumerador com escopo e fortemente tipado.
-// É mais seguro que o 'enum' tradicional do C.
+// A definição do TokenType não muda.
 enum class TokenType {
     // Tokens de um caractere
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -28,19 +25,16 @@ enum class TokenType {
     END_OF_FILE
 };
 
-// Usamos std::variant para guardar o valor de um literal.
-// Pode ser uma string, um número, ou nada (monostate).
-using LiteralValue = std::variant<std::monostate, std::string, double>;
+// O tipo LiteralValue foi removido.
 
 struct Token {
     const TokenType type;
     const std::string lexeme;
-    const LiteralValue literal;
+    const lox::Value literal; // <-- MUDANÇA CRÍTICA: Usa lox::Value
     const int line;
 
-    // Construtor para facilitar a criação de tokens
-    Token(TokenType type, std::string lexeme, LiteralValue literal, int line)
-        : type(type), lexeme(std::move(lexeme)), literal(std::move(literal)), line(line) {}
+    // Construtor atualizado para aceitar lox::Value
+    Token(TokenType type, std::string lexeme, lox::Value literal, int line);
 
-    std::string toString() const; // Implementação pode ficar em Token.cpp
+    std::string toString() const;
 };
