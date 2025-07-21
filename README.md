@@ -79,7 +79,7 @@ Siga estas instruções para compilar e executar o projeto em um ambiente Linux 
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone [https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git](https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git)
+    git clone https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git
     cd trabalho-final-trabalho_final_loxcpp
     ```
 
