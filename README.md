@@ -64,44 +64,37 @@ Lox suporta os seguintes elementos e estruturas:
 
 ---
 
-## Instalação
+## Instalação e Execução
 
 Siga estas instruções para compilar e executar o projeto em um ambiente Linux ou macOS.
 
 ### Pré-requisitos
-
-Antes de começar, garanta que você tenha as seguintes ferramentas instaladas:
 
 * **Git:** Para clonar o repositório.
 * **Um compilador C++17:** `g++` (GCC) ou `Clang`.
 * **CMake:** Versão 3.15 ou superior.
 * **Make:** A ferramenta de build padrão em sistemas baseados em Unix.
 
-### Compilação e Execução do Projeto
+### Compilação
 
-1.  **Clone o Repositório**
-    Abra seu terminal e clone o projeto.
-
+1.  **Clone o Repositório:**
     ```bash
     git clone [https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git](https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git)
     cd trabalho-final-trabalho_final_loxcpp
     ```
 
-2.  **Crie o Diretório de Build e Compile**
-    Nós seguimos a prática de "out-of-source build", que mantém os arquivos de compilação separados do código-fonte.
-
+2.  **Crie o Diretório de Build e Compile:**
     ```bash
-    mkdir build
+    mkdir -p build
     cd build
     cmake ..
     make
     ```
-
-    Se a compilação for bem-sucedida, você terá um executável chamado `lox_cpp` dentro da pasta `build/`.
+    Após a compilação, o executável `lox_cpp` estará disponível em `build/`.
 
 ### Executando o Interpretador
 
-Após a compilação, você pode executar o interpretador Lox de duas maneiras:
+Você pode executar o interpretador de duas maneiras, a partir da pasta raiz do projeto:
 
 * **Modo Interativo (REPL):**
     ```bash
@@ -110,8 +103,25 @@ Após a compilação, você pode executar o interpretador Lox de duas maneiras:
 
 * **Executando um Arquivo Lox:**
     ```bash
-    ./build/lox_cpp <caminho/para/seu/arquivo.lox>
+    ./build/lox_cpp caminho/para/seu/arquivo.lox
     ```
+
+---
+
+## Debugging e Visualização da AST
+
+Para fins de depuração e para visualizar a **Árvore de Sintaxe Abstrata (AST)** que o Parser gera, você pode usar o flag `--print-ast`. Isso funciona tanto para arquivos quanto para o modo interativo.
+
+* **Visualizar a AST de um arquivo:**
+    ```bash
+    ./build/lox_cpp --print-ast caminho/para/seu/arquivo.lox
+    ```
+
+* **Visualizar a AST no modo interativo:**
+    ```bash
+    ./build/lox_cpp --print-ast
+    ```
+    No modo interativo, a árvore de cada linha digitada será impressa antes da sua execução. 
 
 ---
 
@@ -131,7 +141,7 @@ Para configurar e rodar os testes, siga os passos abaixo a partir da **raiz do p
     Isso irá popular a pasta `tests/` com todos os casos de teste.
 
 2.  **Compilar o Projeto e os Testes**
-    O processo de compilação é o mesmo, mas agora o CMake irá configurar e compilar os testes também. Se já tiver uma pasta `build`, é recomendado limpá-la para garantir que os testes sejam incluídos corretamente.
+    Se já tiver compilado o projeto, é recomendado limpar a pasta `build` para garantir que os testes sejam incluídos corretamente.
 
     ```bash
     rm -rf build
@@ -152,21 +162,17 @@ Para configurar e rodar os testes, siga os passos abaixo a partir da **raiz do p
 ---
 
 ## Referências
-
 * **Nystrom, Robert. "Crafting Interpreters".** Esta foi a principal referência para a construção do interpretador Lox. A estrutura geral, a gramática da linguagem e muitos dos algoritmos foram diretamente inspirados por esta obra.
     * [Link para o livro online](https://craftinginterpreters.com/)
-
 ---
 
 ## Estrutura do Código
-
-O código-fonte do interpretador LoxCpp está organizado nos seguintes módulos e classes principais:
 
 * **`src/`**: Contém todos os arquivos-fonte C++.
     * **`Scanner.hpp` / `Scanner.cpp`**: Implementa o **Analisador Léxico**.
     * **`Parser.hpp` / `Parser.cpp`**: Implementa o **Analisador Sintático** e constrói a AST.
     * **`ast/`**: Contém as definições das classes da AST (`Expr.hpp`, `Stmt.hpp`, etc.).
-    * **`Interpreter.hpp` / `Interpreter.cpp`**: Contém a lógica do **Interpretador**, que executa o código a partir da AST.
+    * **`Interpreter.hpp` / `Interpreter.cpp`**: Contém a lógica do **Interpretador**.
     * **`Environment.hpp` / `Environment.cpp`**: Implementa o ambiente de execução para gerenciar escopos e variáveis.
     * **`main.cpp`**: Ponto de entrada do programa.
 
@@ -174,9 +180,6 @@ O código-fonte do interpretador LoxCpp está organizado nos seguintes módulos 
 
 ## Bugs/Limitações/Problemas Conhecidos
 
-Apesar de funcional, o interpretador LoxCpp possui algumas limitações:
-
-* **Ausência de Otimização:** O interpretador não realiza nenhuma otimização de código. A AST é interpretada diretamente.
 * **Recursos da Linguagem:** Atualmente, LoxCpp não suporta funcionalidades mais avançadas como `for`, operadores lógicos `and`/`or`, funções e classes, que são descritos no livro mas não foram implementados.
 * **Coleta de Lixo:** A gestão de memória é baseada em ponteiros inteligentes do C++, mas não há um coletor de lixo para gerenciar objetos Lox dinamicamente.
-* **Testes Unitários:** O projeto possui uma boa cobertura de testes para as funcionalidades implementadas (Scanner, Parser de statements básicos, e o Interpretador). A suíte de testes pode ser expandida para cobrir mais casos de erro e funcionalidades futuras.
+* **Testes Unitários:** O projeto possui uma boa cobertura de testes para as funcionalidades implementadas. A suíte de testes pode ser expandida para cobrir mais casos de erro e funcionalidades futuras.
