@@ -2,7 +2,7 @@
 
 #include "../Value.hpp"
 
-namespace lox { // <-- INÍCIO DO NAMESPACE
+namespace lox {
 
     // Forward declarations de todos os tipos de nós para evitar include circular.
     // Expressões
@@ -23,7 +23,7 @@ namespace lox { // <-- INÍCIO DO NAMESPACE
     struct WhileStmt;
     // Adicione outros aqui conforme for criando...
 
-    // A classe Visitor AGORA ESTÁ DENTRO DO NAMESPACE LOX
+    // A classe Visitor, corretamente definida DENTRO do namespace lox
     template <typename R>
     class Visitor {
     public:
@@ -47,24 +47,4 @@ namespace lox { // <-- INÍCIO DO NAMESPACE
         virtual R visitWhileStmt(const WhileStmt& stmt) = 0;
     };
 
-} // <-- FIM DO NAMESPACE
-template <typename R>
-class Visitor {
-public:
-    // Métodos para visitar expressões
-    virtual R visitBinaryExpr(const lox::Binary& expr) = 0;
-    virtual R visitUnaryExpr(const lox::Unary& expr) = 0;
-    virtual R visitLiteralExpr(const lox::Literal& expr) = 0;
-    virtual R visitGroupingExpr(const lox::Grouping& expr) = 0;
-    virtual R visitVariableExpr(const lox::Variable& expr) = 0;
-    virtual R visitAssignExpr(const lox::Assign& expr) = 0;
-    virtual R visitCallExpr(const lox::Call& expr) = 0;
-
-    // Métodos para visitar statements
-    virtual R visitExpressionStmt(const lox::ExpressionStmt& stmt) = 0;
-    virtual R visitPrintStmt(const lox::PrintStmt& stmt) = 0;
-    virtual R visitVarStmt(const lox::VarStmt& stmt) = 0;
-    virtual R visitBlockStmt(const lox::BlockStmt& stmt) = 0;
-    virtual R visitIfStmt(const lox::IfStmt& stmt) = 0;
-    virtual R visitWhileStmt(const lox::WhileStmt& stmt) = 0;
-};
+} // Fim do namespace lox

@@ -17,7 +17,7 @@ Este é o repositório para o projeto final da disciplina de Compiladores, uma i
 
 | Matrícula    | Aluno                       |
 | ------------ | --------------------------- |
-| 20/2016702   | Ana Joyce |
+| 21/1031566   | Ana Joyce |
 | 22/1008801   | Bianca Patrocínio   |
 
 </div>

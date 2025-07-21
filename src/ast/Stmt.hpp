@@ -2,18 +2,19 @@
 
 #include "ast/Visitor.hpp"
 #include "ast/Expr.hpp"
+#include "Value.hpp"
 #include <vector>
 #include <memory>
-#include "../Token.hpp" // Necessário para VarStmt, etc.
+#include "../Token.hpp"
 
-namespace lox { // <-- ADICIONADO: Início do namespace
+namespace lox {
 
 // Classe base para todos os Statements
 struct Stmt {
 public:
     virtual ~Stmt() = default;
-    // CORRIGIDO: Usa nosso Visitor<void> unificado. Statements não retornam valor.
-    virtual void accept(Visitor<void>& visitor) const = 0;
+    // CORRIGIDO: Assinatura alterada para bater com o Interpreter (Visitor<Value>).
+    virtual Value accept(Visitor<Value>& visitor) const = 0;
 };
 
 // --- Classes Concretas de Statement ---
@@ -24,8 +25,9 @@ struct ExpressionStmt : public Stmt {
     explicit ExpressionStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitExpressionStmt(*this);
+    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
+    Value accept(Visitor<Value>& visitor) const override {
+        return visitor.visitExpressionStmt(*this); // ADICIONADO: return
     }
 };
 
@@ -35,8 +37,9 @@ struct PrintStmt : public Stmt {
     explicit PrintStmt(std::unique_ptr<Expr> expression)
         : expression(std::move(expression)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitPrintStmt(*this);
+    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
+    Value accept(Visitor<Value>& visitor) const override {
+        return visitor.visitPrintStmt(*this); // ADICIONADO: return
     }
 };
 
@@ -46,12 +49,12 @@ struct BlockStmt : public Stmt {
     explicit BlockStmt(std::vector<std::unique_ptr<Stmt>> statements)
         : statements(std::move(statements)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitBlockStmt(*this);
+    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
+    Value accept(Visitor<Value>& visitor) const override {
+        return visitor.visitBlockStmt(*this); // ADICIONADO: return
     }
 };
 
-// Adicione as outras classes aqui dentro do namespace, por exemplo:
 struct VarStmt : public Stmt {
     const Token name;
     const std::unique_ptr<Expr> initializer;
@@ -59,10 +62,11 @@ struct VarStmt : public Stmt {
     VarStmt(Token name, std::unique_ptr<Expr> initializer)
         : name(std::move(name)), initializer(std::move(initializer)) {}
 
-    void accept(Visitor<void>& visitor) const override {
-        visitor.visitVarStmt(*this);
+    // CORRIGIDO: Retorna 'Value' e aceita 'Visitor<Value>'.
+    Value accept(Visitor<Value>& visitor) const override {
+        return visitor.visitVarStmt(*this); // ADICIONADO: return
     }
 };
 
 
-} // <-- ADICIONADO: Fim do namespace
+} // Fim do namespace lox
