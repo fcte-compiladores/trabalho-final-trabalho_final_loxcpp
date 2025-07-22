@@ -1,0 +1,21 @@
+// Demonstração de escopo de variáveis.
+var a = "global";
+
+print "No escopo global, 'a' e:";
+print a;
+
+{
+  var a = "bloco";
+  print "Dentro do bloco, 'a' e:";
+  print a;
+  
+  var b = "apenas no bloco";
+  print "Variavel 'b' criada no bloco:";
+  print b;
+}
+
+print "De volta ao escopo global, 'a' e:";
+print a;
+
+// A linha abaixo causaria um erro em tempo de execução, pois 'b' não existe aqui.
+// print b;
