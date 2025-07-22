@@ -1,0 +1,11 @@
+// Demonstração de variáveis e expressões.
+var a = 10;
+var b = 20;
+var message = "A soma de a + b e: ";
+
+print message;
+print a + b;
+
+a = a * 2;
+print "O novo valor de 'a' e:";
+print a;
