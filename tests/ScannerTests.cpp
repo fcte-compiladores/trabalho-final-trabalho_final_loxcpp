@@ -37,7 +37,7 @@ TEST(ScannerTests, TestArithmeticOperators) {
 }
 
 TEST(ScannerTests, TestAllSingleCharTokens) {
-    std::string source = "(){},.-+;*/!<=>";
+    std::string source = "(){},.-+;*/! < = >";
     Scanner scanner(source);
     std::vector<Token> tokens = scanner.scanTokens();
 
@@ -45,7 +45,6 @@ TEST(ScannerTests, TestAllSingleCharTokens) {
         TokenType::LEFT_PAREN, TokenType::RIGHT_PAREN, TokenType::LEFT_BRACE,
         TokenType::RIGHT_BRACE, TokenType::COMMA, TokenType::DOT, TokenType::MINUS,
         TokenType::PLUS, TokenType::SEMICOLON, TokenType::STAR, TokenType::SLASH,
-        // CORREÇÃO: A ordem dos tokens foi ajustada para corresponder à do scanner.
         TokenType::BANG, TokenType::LESS, TokenType::EQUAL, TokenType::GREATER,
         TokenType::END_OF_FILE
     };

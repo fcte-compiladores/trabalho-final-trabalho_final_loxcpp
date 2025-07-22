@@ -1,5 +1,5 @@
 #!/bin/bash
-# (Conteúdo do script de setup_tests.sh atualizado e corrigido)
+
 # Este script cria e preenche os arquivos de teste para o projeto LoxCpp.
 # Deve ser executado a partir da raiz do projeto.
 
@@ -48,7 +48,8 @@ TEST(ScannerTests, TestArithmeticOperators) {
 }
 
 TEST(ScannerTests, TestAllSingleCharTokens) {
-    std::string source = "(){},.-+;*/!<=>";
+    // CORREÇÃO: Adicionados espaços em "! < = >" para remover a ambiguidade
+    std::string source = "(){},.-+;*/! < = >";
     Scanner scanner(source);
     std::vector<Token> tokens = scanner.scanTokens();
 
@@ -56,12 +57,11 @@ TEST(ScannerTests, TestAllSingleCharTokens) {
         TokenType::LEFT_PAREN, TokenType::RIGHT_PAREN, TokenType::LEFT_BRACE,
         TokenType::RIGHT_BRACE, TokenType::COMMA, TokenType::DOT, TokenType::MINUS,
         TokenType::PLUS, TokenType::SEMICOLON, TokenType::STAR, TokenType::SLASH,
-        TokenType::BANG, TokenType::LESS, TokenType::GREATER, TokenType::EQUAL,
+        TokenType::BANG, TokenType::LESS, TokenType::EQUAL, TokenType::GREATER,
         TokenType::END_OF_FILE
     };
 
     ASSERT_EQ(tokens.size(), expected_types.size());
-    // CORREÇÃO: O loop deve ir até o final (i < expected_types.size())
     for (size_t i = 0; i < expected_types.size(); ++i) {
         EXPECT_EQ(tokens[i].type, expected_types[i]);
     }
