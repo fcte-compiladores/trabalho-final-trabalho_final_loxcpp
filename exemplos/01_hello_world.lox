@@ -1,0 +1,2 @@
+// O programa mais simples: imprimir uma mensagem.
+print "Hello, world!";

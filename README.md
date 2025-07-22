@@ -79,7 +79,7 @@ Siga estas instruções para compilar e executar o projeto em um ambiente Linux 
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone [https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git](https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git)
+    git clone https://github.com/fcte-compiladores/trabalho-final-trabalho_final_loxcpp.git
     cd trabalho-final-trabalho_final_loxcpp
     ```
 
@@ -122,6 +122,24 @@ Para fins de depuração e para visualizar a **Árvore de Sintaxe Abstrata (AST)
     ./build/lox_cpp --print-ast
     ```
     No modo interativo, a árvore de cada linha digitada será impressa antes da sua execução. 
+
+---
+
+## Exemplos
+
+O projeto inclui uma pasta `exemplos/` com arquivos `.lox` que demonstram as funcionalidades da linguagem implementada. Você pode executá-los com o interpretador:
+
+```bash
+./build/lox_cpp exemplos/01_hello_world.lox
+```
+
+Os exemplos progridem em complexidade:
+
+*   **`01_hello_world.lox`**: O programa mais simples, que imprime "Hello, world!".
+*   **`02_variables.lox`**: Demonstra a declaração, atribuição e uso de variáveis com expressões aritméticas.
+*   **`03_control_flow.lox`**: Mostra o uso de estruturas de controle como `if/else` e o laço `while`.
+*   **`04_fibonacci.lox`**: Um algoritmo um pouco mais elaborado que calcula os primeiros números da sequência de Fibonacci de forma iterativa.
+*   **`05_scope.lox`**: Ilustra como o escopo de variáveis funciona, incluindo o sombreamento de variáveis (shadowing) em blocos internos.
 
 ---
 
