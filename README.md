@@ -75,6 +75,49 @@ Siga estas instruções para compilar e executar o projeto em um ambiente Linux 
 * **CMake:** Versão 3.15 ou superior.
 * **Make:** A ferramenta de build padrão em sistemas baseados em Unix.
 
+#### Como instalar os pré-requisitos:
+
+**Linux (Debian/Ubuntu):**
+
+Abra seu terminal e execute os seguintes comandos:
+
+```bash
+sudo apt update
+sudo apt install git build-essential cmake
+````
+
+  * `git`: Para gerenciar o código-fonte.
+  * `build-essential`: Pacote que inclui o `g++` (compilador GCC para C++) e `make`.
+  * `cmake`: Ferramenta para gerenciar o processo de build.
+
+**Linux (Fedora):**
+
+Abra seu terminal e execute os seguintes comandos:
+
+```bash
+sudo dnf install git gcc-c++ make cmake
+```
+
+  * `git`: Para gerenciar o código-fonte.
+  * `gcc-c++`: Pacote que inclui o `g++` (compilador GCC para C++).
+  * `make`: Ferramenta de build.
+  * `cmake`: Ferramenta para gerenciar o processo de build.
+
+**macOS (com Homebrew):**
+
+Se você não tiver o Homebrew, instale-o primeiro seguindo as instruções em [brew.sh](https://brew.sh/).
+
+Após instalar o Homebrew, abra seu terminal e execute:
+
+```bash
+brew install git cmake
+brew install gcc # Para o g++ (GCC) ou use clang que já vem com Xcode Command Line Tools
+```
+
+  * `git`: Para gerenciar o código-fonte.
+  * `cmake`: Ferramenta para gerenciar o processo de build.
+  * `gcc`: Instala a versão do GCC. Alternativamente, as **Xcode Command Line Tools** (que incluem `clang` e `make`) geralmente são suficientes para a compilação. Você pode instalá-las com `xcode-select --install`.
+
 ### Compilação
 
 1.  **Clone o Repositório:**
